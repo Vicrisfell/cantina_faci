@@ -17,6 +17,7 @@ jobs:
           channel: 'stable'
 
       - name: Baixar pacotes e compilar Web
+        working-directory: cantina_facil
         run: |
           flutter pub get
           flutter build web --release \
@@ -29,4 +30,5 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: live
-          projectId: cantinafacil-5627e
+          projectId: SEU-ID-DO-PROJETO-FIREBASE
+          entryPoint: ./cantina_facil
