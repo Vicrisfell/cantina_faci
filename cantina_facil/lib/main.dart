@@ -12,8 +12,24 @@ const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  assert(_supabaseUrl.isNotEmpty && _supabaseAnonKey.isNotEmpty,
-      'Passe --dart-define=SUPABASE_URL e SUPABASE_ANON_KEY.');
+
+  if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
+    runApp(const MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              'Erro de configuração: SUPABASE_URL ou SUPABASE_ANON_KEY não foram carregadas no build.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.red, fontSize: 16),
+            ),
+          ),
+        ),
+      ),
+    ));
+    return;
+  }
 
   await initializeDateFormatting('pt_BR');
   await Supabase.initialize(url: _supabaseUrl, anonKey: _supabaseAnonKey);
