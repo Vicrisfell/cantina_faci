@@ -17,10 +17,15 @@ jobs:
           channel: 'stable'
 
       - name: Baixar pacotes e compilar Web
+        env:
+          SUPA_URL: ${{ secrets.SUPABASE_URL }}
+          SUPA_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
+          if [ -f "cantina_facil/pubspec.yaml" ]; then cd cantina_facil; fi
+          CLEAN_URL=$(echo "$SUPA_URL" | tr -d '[:space:]')
+          CLEAN_KEY=$(echo "$SUPA_KEY" | tr -d '[:space:]')
           flutter pub get
-          flutter build web --release --dart-define="SUPABASE_URL=${{ secrets.SUPABASE_URL }}" --dart-define="SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}"
-
+          flutter build web --release --dart-define="SUPABASE_URL=$CLEAN_URL" --dart-define="SUPABASE_ANON_KEY=$CLEAN_KEY"
 
       - name: Publicar no Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -30,3 +35,4 @@ jobs:
           channelId: live
           projectId: cantinafacil-5627e
           entryPoint: ./cantina_facil
+
