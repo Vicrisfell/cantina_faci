@@ -13,37 +13,55 @@ const _supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
-    runApp(const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(24),
-            child: Text(
-              'Erro de configuração: SUPABASE_URL ou SUPABASE_ANON_KEY não foram carregadas no build.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.red, fontSize: 16),
+  try {
+    if (_supabaseUrl.isEmpty || _supabaseAnonKey.isEmpty) {
+      throw Exception(
+        'As chaves SUPABASE_URL ou SUPABASE_ANON_KEY chegaram vazias no build.\n'
+        'URL: "$_supabaseUrl"\n'
+        'KEY vazia: ${_supabaseAnonKey.isEmpty}',
+      );
+    }
+
+    await initializeDateFormatting('pt_BR');
+    await Supabase.initialize(
+      url: _supabaseUrl.trim(),
+      anonKey: _supabaseAnonKey.trim(),
+    );
+
+    if (Supabase.instance.client.auth.currentSession != null) {
+      try {
+        Sessao.perfil = await AuthService().resolveAccess();
+      } catch (e) {
+        debugPrint('[main] Falha ao carregar perfil da sessão: $e');
+      }
+    }
+
+    runApp(const CantinaFacilApp());
+  } catch (erro, stack) {
+    debugPrint('[main] ERRO FATAL: $erro\n$stack');
+    runApp(
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          backgroundColor: const Color(0xFFF5EBD6),
+          body: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                'Erro ao iniciar o Cantina Fácil:\n\n$erro',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Color(0xFF5E1914),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),
       ),
-    ));
-    return;
+    );
   }
-
-  await initializeDateFormatting('pt_BR');
-  await Supabase.initialize(url: _supabaseUrl, anonKey: _supabaseAnonKey);
-
-  // Sessão persistida de execução anterior: recarrega o perfil de acesso.
-  if (Supabase.instance.client.auth.currentSession != null) {
-    try {
-      Sessao.perfil = await AuthService().resolveAccess();
-    } catch (e) {
-      debugPrint('[main] Falha ao carregar perfil da sessão: $e');
-    }
-  }
-
-  runApp(const CantinaFacilApp());
 }
 
 class CantinaFacilApp extends StatelessWidget {
