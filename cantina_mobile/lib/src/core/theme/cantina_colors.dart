@@ -27,4 +27,14 @@ class CantinaColors {
   static const Color verde = Color(0xFF1B6E38);
   static const Color error = Color(0xFFB3261E);
   static const Color vermelho = Color(0xFFB3261E);
+
+  static const Color bege = Color(0xFF2C1E18);
+  static const Color branco = Color(0xFF2C1E18);
+  static const Color campoCreme = Color(0xFF2C1E18);
+  static const Color campoLogin = Color(0xFF2C1E18);
+  static const Color salmao = Color(0xFF2C1E18);
+  static const Color trilho = Color(0xFF2C1E18);
+  static const Color verdeFundo = Color(0xFF2C1E18);
+  static const Color verdeTexto = Color(0xFF2C1E18);
+  static const Color vermelhoToldo = Color(0xFF2C1E18);
 }
